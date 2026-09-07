@@ -1,0 +1,80 @@
+# Fly.io deployment for opsgaurdian-api.
+#
+# Two process groups:
+#   web      - uvicorn FastAPI (the public API)
+#   workers  - supervisord-managed investigate + actor + prettifier
+#
+# Provision before first deploy:
+#   fly postgres create --name opsgaurdian-db --region iad
+#   fly postgres attach --app opsgaurdian-api opsgaurdian-db
+#
+# Domains:
+#   fly certs create api.app.opsgaurdian.quest
+
+app = "opsgaurdian-api"
+primary_region = "iad"
+
+[build]
+  dockerfile = "opsgaurdian-api/Dockerfile"
+  # Build from the opsgaurdianv2/ repo root so the agent/, coral/, and
+  # opsgaurdian-api/ siblings are all in build context.
+  # Run with: `fly deploy --remote-only` from the opsgaurdianv2/ directory.
+  ignorefile = "../.dockerignore"
+
+[env]
+  PORT = "8000"
+  WEB_APP_ORIGIN = "https://app.opsgaurdian.quest"
+  CORAL_BINARY = "/usr/local/bin/coral"
+
+[processes]
+  web = "uv run uvicorn opsgaurdian_api.main:app --host 0.0.0.0 --port 8000"
+  investigate = "uv run python -m opsgaurdian_api.workers.investigate"
+  actor = "uv run python -m opsgaurdian_api.workers.actor"
+  prettifier = "uv run python -m opsgaurdian_api.workers.prettifier"
+
+[[services]]
+  processes = ["web"]
+  protocol = "tcp"
+  internal_port = 8000
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+    force_https = true
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [services.concurrency]
+    type = "requests"
+    soft_limit = 100
+    hard_limit = 150
+
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "10s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+  processes = ["web"]
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "768mb"
+  processes = ["investigate"]
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+  processes = ["actor"]
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+  processes = ["prettifier"]
