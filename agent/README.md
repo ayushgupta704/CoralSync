@@ -1,7 +1,7 @@
-# `agent/` — the opsGaurdian investigation loop
+# `agent/` — the coralSync investigation loop
 
-This directory is the brain. Everything else in opsGaurdian (the FastAPI
-in `opsgaurdian-api/`, the React surface in `opsgaurdian-ui/`, the three
+This directory is the brain. Everything else in coralSync (the FastAPI
+in `coral-sync-api/`, the React surface in `coral-sync-ui/`, the three
 worker processes) exists to deliver cases to this loop and to act on
 what it decides. The loop itself is a few hundred lines of Python.
 No agent framework. No orchestrator. Just an async generator that
@@ -45,7 +45,7 @@ policy rule) approves them.
 ## How a case actually runs
 
 ```text
-investigate worker (opsgaurdian-api/workers/investigate.py)
+investigate worker (coral-sync-api/workers/investigate.py)
        │
        │  picks up a `cases` row from a PG LISTEN/NOTIFY signal
        ▼
@@ -129,7 +129,7 @@ Write tools (handled inside the loop, no external side effects):
 
 ## Running it standalone
 
-The agent runs inside the `opsgaurdian-investigate` worker in
+The agent runs inside the `coralsync-investigate` worker in
 production, but you can drive it from a script for debugging.
 
 ```bash
@@ -141,7 +141,7 @@ cp .env.example .env
 $EDITOR .env   # set OPENROUTER_API_KEY; CORAL_BINARY defaults to `coral` on PATH
 
 # Run a single case end-to-end against a local Coral.
-uv run python -m opsgaurdian_agent.smoke aperture
+uv run python -m coral_sync_agent.smoke aperture
 ```
 
 The smoke script lives in `scripts/`. There are also `seed_*.py`
@@ -153,9 +153,9 @@ Coral instance.
 ## What's NOT in this directory
 
 - **The actor that fires actions.** That lives in
-  `opsgaurdian-api/workers/actor.py`. The agent never holds write
+  `coral-sync-api/workers/actor.py`. The agent never holds write
   credentials.
-- **The HTTP surface.** That lives in `opsgaurdian-api/`. The agent
+- **The HTTP surface.** That lives in `coral-sync-api/`. The agent
   doesn't speak HTTP at all; it speaks events.
 - **Per-tenant config.** The agent only knows about the case it was
   handed. Org resolution, member auth, and policy matching all
@@ -173,7 +173,7 @@ Coral instance.
   No registration step.
 - Changing the system prompt: edit `prompts.py`. There is no
   templating. The trigger text is appended verbatim by `loop.py`.
-- Changing the model: `OPSGAURDIAN_MODEL=...` in the env. Default is
+- Changing the model: `CORALSYNC_MODEL=...` in the env. Default is
   `deepseek/deepseek-v4-pro:exacto` (cheap, smart enough). Any
   OpenRouter model with function-calling support works.
 - Changing the budget: `Budget` in `loop.py`. Max prompt tokens,

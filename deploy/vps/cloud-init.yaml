@@ -1,12 +1,12 @@
 #cloud-config
-# opsGaurdian - one-click VPS bootstrap.
+# coralSync - one-click VPS bootstrap.
 #
 # Paste the body of this file into the "Startup Script" / "User Data"
 # field when provisioning an Ubuntu 22.04 / 24.04 VPS (DigitalOcean,
 # Vultr, Linode, Hetzner, AWS Lightsail - anywhere that takes
 # cloud-init). The VM boots, installs Docker, clones the repo, and
 # starts the stack. SSH in afterwards to paste your GEMINI_API_KEY
-# into /opt/opsgaurdian/.env, then restart compose.
+# into /opt/coralsync/.env, then restart compose.
 
 package_update: true
 package_upgrade: false
@@ -20,18 +20,18 @@ packages:
   - ufw
 
 write_files:
-  - path: /etc/systemd/system/opsgaurdian-bootstrap.service
+  - path: /etc/systemd/system/coralsync-bootstrap.service
     permissions: "0644"
     content: |
       [Unit]
-      Description=opsGaurdian first-boot bootstrap
+      Description=coralSync first-boot bootstrap
       After=network-online.target docker.service
       Wants=network-online.target
 
       [Service]
       Type=oneshot
       RemainAfterExit=yes
-      ExecStart=/bin/bash -lc 'curl -fsSL https://raw.githubusercontent.com/ayush-gupta/opsgaurdian/main/deploy/vps/setup.sh | bash'
+      ExecStart=/bin/bash -lc 'curl -fsSL https://raw.githubusercontent.com/ayush-gupta/coralsync/main/deploy/vps/setup.sh | bash'
       StandardOutput=journal
       StandardError=journal
 
@@ -41,11 +41,11 @@ write_files:
 runcmd:
   - curl -fsSL https://get.docker.com | sh
   - systemctl enable --now docker
-  - systemctl enable --now opsgaurdian-bootstrap.service
+  - systemctl enable --now coralsync-bootstrap.service
 
 final_message: |
-  opsGaurdian VPS bootstrap kicked off. Watch with:
-    journalctl -u opsgaurdian-bootstrap -f
-  When the unit reports active, edit /opt/opsgaurdian/.env to add your
+  coralSync VPS bootstrap kicked off. Watch with:
+    journalctl -u coralsync-bootstrap -f
+  When the unit reports active, edit /opt/coralsync/.env to add your
   GEMINI_API_KEY and restart compose:
-    docker compose -f /opt/opsgaurdian/docker-compose.yml restart
+    docker compose -f /opt/coralsync/docker-compose.yml restart

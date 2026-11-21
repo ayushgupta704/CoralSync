@@ -1,8 +1,8 @@
 # VPS deployment
 
-opsGaurdian runs on any Ubuntu 22.04 / 24.04 VPS - DigitalOcean, Linode,
+coralSync runs on any Ubuntu 22.04 / 24.04 VPS - DigitalOcean, Linode,
 Vultr, Hetzner, AWS Lightsail, OVH, or your own metal. Three
-supported paths from a fresh VPS to a running opsGaurdian. Full deploy
+supported paths from a fresh VPS to a running coralSync. Full deploy
 walkthrough (env vars, Caddy config, Stripe / Slack / Resend wiring)
 lives in [`../../DEPLOY.md`](../../DEPLOY.md).
 
@@ -12,7 +12,7 @@ When provisioning a new VPS that accepts cloud-init / user-data in
 the console (DigitalOcean's "User data" field, Vultr's "Startup
 Script", Linode's "Stackscript"), paste the contents of
 [`cloud-init.yaml`](cloud-init.yaml). The VM boots, installs Docker
-+ `uv`, clones the repo into `/opt/opsgaurdian`, brings up Postgres in a
++ `uv`, clones the repo into `/opt/coralsync`, brings up Postgres in a
 container, installs the four systemd services, and reports its IP.
 Three to five minutes end to end.
 
@@ -20,8 +20,8 @@ After it finishes:
 
 ```bash
 ssh root@<vps-ip>
-nano /opt/opsgaurdian/opsgaurdian-api/.env       # paste real secrets
-systemctl restart opsgaurdian-api opsgaurdian-investigate opsgaurdian-actor opsgaurdian-prettifier
+nano /opt/coralsync/coral-sync-api/.env       # paste real secrets
+systemctl restart coral-sync-api coralsync-investigate coralsync-actor coralsync-prettifier
 ```
 
 Open `http://<vps-ip>:8765` to confirm the API is up. Add a domain
@@ -33,7 +33,7 @@ For VPS providers without cloud-init in the console, or if you prefer
 to watch the install in real time, SSH in as root and:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ayush-gupta/opsgaurdian/main/deploy/vps/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ayush-gupta/coralsync/main/deploy/vps/setup.sh | bash
 ```
 
 The same `setup.sh` that `cloud-init.yaml` runs under the hood.
@@ -63,7 +63,7 @@ Caddy auto-provisions a Let's Encrypt cert on the first HTTPS
 request. `https://your-domain.com` now reverse-proxies to the
 FastAPI service on `localhost:8765` with proper SSE buffering, gzip,
 and HSTS. The same Caddyfile also serves the UI from
-`/opt/opsgaurdian/opsgaurdian-ui/dist/` as static files alongside the API
+`/opt/coralsync/coral-sync-ui/dist/` as static files alongside the API
 routes.
 
 ## What's running on the box afterwards
@@ -71,27 +71,27 @@ routes.
 | Process | Source |
 |---|---|
 | `caddy` | systemd, terminates TLS, proxies to :8765 + serves static UI |
-| `opsgaurdian-api` | systemd, FastAPI on `127.0.0.1:8765` via `uv run uvicorn` |
-| `opsgaurdian-investigate` | systemd, agent loop worker |
-| `opsgaurdian-actor` | systemd, action executor worker |
-| `opsgaurdian-prettifier` | systemd, event-summary worker |
-| `opsgaurdian-postgres` | Docker container, PG 16 on `127.0.0.1:5432` |
-| `coral` | spawned per-investigation by opsgaurdian-investigate over MCP stdio |
+| `coral-sync-api` | systemd, FastAPI on `127.0.0.1:8765` via `uv run uvicorn` |
+| `coralsync-investigate` | systemd, agent loop worker |
+| `coralsync-actor` | systemd, action executor worker |
+| `coralsync-prettifier` | systemd, event-summary worker |
+| `coralsync-postgres` | Docker container, PG 16 on `127.0.0.1:5432` |
+| `coral` | spawned per-investigation by coralsync-investigate over MCP stdio |
 
 Logs:
 ```bash
-journalctl -u opsgaurdian-api -f
-journalctl -u opsgaurdian-investigate -f
-tail -f /var/log/opsgaurdian-actor.log         # actor uses StandardOutput=append to file
-tail -f /var/log/opsgaurdian-prettifier.log
+journalctl -u coral-sync-api -f
+journalctl -u coralsync-investigate -f
+tail -f /var/log/coralsync-actor.log         # actor uses StandardOutput=append to file
+tail -f /var/log/coralsync-prettifier.log
 ```
 
 ## Env vars
 
-At minimum, `/opt/opsgaurdian/opsgaurdian-api/.env` must contain:
+At minimum, `/opt/coralsync/coral-sync-api/.env` must contain:
 
 ```
-DATABASE_URL=postgresql://opsgaurdian:<pg-password>@127.0.0.1:5432/opsgaurdian
+DATABASE_URL=postgresql://coralsync:<pg-password>@127.0.0.1:5432/coralsync
 OPENROUTER_API_KEY=sk-or-v1-...
 CORAL_BINARY=/usr/local/bin/coral
 CLERK_SECRET_KEY=sk_test_...
@@ -101,7 +101,7 @@ WEB_APP_ORIGIN=https://your-domain.com
 The full env-var menu (Stripe, HubSpot, Slack, Resend, signing
 secrets, model overrides) is documented in
 [`../../DEPLOY.md`](../../DEPLOY.md). The agent itself only reads
-three vars (`OPENROUTER_API_KEY`, `OPSGAURDIAN_MODEL`, `CORAL_BINARY`) -
+three vars (`OPENROUTER_API_KEY`, `CORALSYNC_MODEL`, `CORAL_BINARY`) -
 the rest are for the API, the actor's write adapters, and webhook
 signature verification. Per-source API credentials (Stripe / HubSpot
 read tokens for the agent) live on the Coral side via
@@ -114,32 +114,32 @@ Postgres workload is small (one case is a few KB of events + a
 handful of findings + a few action rows), the agent does its heavy
 work over network round-trips to OpenRouter + Coral rather than on
 the box. We've run the public demo at
-[opsgaurdian.quest](https://opsgaurdian.quest) on a single 4-vCPU droplet
+[coralsync.quest](https://coralsync.quest) on a single 4-vCPU droplet
 without breaking a sweat.
 
 For higher throughput (real production, not just the demo), the
 bottleneck is the LLM round-trips per investigation. Scale by
-running more `opsgaurdian-investigate` worker instances and pointing
+running more `coralsync-investigate` worker instances and pointing
 them all at the same Postgres - `LISTEN/NOTIFY` plus `FOR UPDATE
 SKIP LOCKED` on `cases` already gives you safe horizontal scaling.
 
 ## Updates
 
-The day-to-day deploy loop we use at opsgaurdian.quest:
+The day-to-day deploy loop we use at coralsync.quest:
 
 ```bash
 ssh root@<vps-ip>
-cd /opt/opsgaurdian
+cd /opt/coralsync
 git fetch origin main && git reset --hard origin/main
-systemctl restart opsgaurdian-api opsgaurdian-investigate opsgaurdian-actor opsgaurdian-prettifier
+systemctl restart coral-sync-api coralsync-investigate coralsync-actor coralsync-prettifier
 ```
 
 UI changes also need a build + rsync from your laptop:
 
 ```bash
 # laptop
-cd opsgaurdian-ui && npm run build
-rsync -avz --delete dist/ root@<vps-ip>:/opt/opsgaurdian/opsgaurdian-ui/dist/
+cd coral-sync-ui && npm run build
+rsync -avz --delete dist/ root@<vps-ip>:/opt/coralsync/coral-sync-ui/dist/
 ```
 
 Hard-refresh the browser after rsync to pick up the new JS bundle

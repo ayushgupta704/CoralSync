@@ -1,19 +1,19 @@
 <p align="center">
-  <a href="https://opsgaurdian.quest">
-    <img src="https://opsgaurdian.quest/banner.png" alt="opsGaurdian - the operations layer for revenue disputes" />
+  <a href="https://coralsync.quest">
+    <img src="https://coralsync.quest/banner.png" alt="coralSync - the operations layer for revenue disputes" />
   </a>
 </p>
 
-<h3 align="center">opsGaurdian</h3>
+<h3 align="center">coralSync</h3>
 
 <p align="center">
   The operations layer for revenue disputes.
   <br />
   Settles chargebacks, refund requests, and failed payments in minutes - not days.
   <br /><br />
-  <a href="https://opsgaurdian.quest"><strong>opsgaurdian.quest »</strong></a>
+  <a href="https://coralsync.quest"><strong>coralsync.quest »</strong></a>
   <br /><br />
-  <a href="#about-opsgaurdian"><strong>About</strong></a> ·
+  <a href="#about-coralsync"><strong>About</strong></a> ·
   <a href="#how-it-works"><strong>How it works</strong></a> ·
   <a href="#the-coral-data-plane"><strong>Coral</strong></a> ·
   <a href="#sources"><strong>Sources</strong></a> ·
@@ -24,18 +24,18 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ayush-gupta/opsgaurdian/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
-  <a href="https://github.com/ayush-gupta/opsgaurdian/stargazers"><img src="https://img.shields.io/github/stars/ayush-gupta/opsgaurdian?style=flat&logo=github" alt="Stars"></a>
-  <a href="https://github.com/ayush-gupta/opsgaurdian/pulse"><img src="https://img.shields.io/github/commit-activity/m/ayush-gupta/opsgaurdian?style=flat&logo=github" alt="Commits per month"></a>
-  <a href="https://github.com/ayush-gupta/opsgaurdian/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome"></a>
+  <a href="https://github.com/ayush-gupta/coralsync/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
+  <a href="https://github.com/ayush-gupta/coralsync/stargazers"><img src="https://img.shields.io/github/stars/ayush-gupta/coralsync?style=flat&logo=github" alt="Stars"></a>
+  <a href="https://github.com/ayush-gupta/coralsync/pulse"><img src="https://img.shields.io/github/commit-activity/m/ayush-gupta/coralsync?style=flat&logo=github" alt="Commits per month"></a>
+  <a href="https://github.com/ayush-gupta/coralsync/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome"></a>
 </p>
 
 
-## About opsGaurdian
+## About coralSync
 
-opsGaurdian is the autonomous investigator for B2B SaaS billing operations. The moment a chargeback hits Stripe, a refund request lands in your support inbox, or a teammate `@-mentions` opsGaurdian in Slack, the agent reads across **every connected system in one query**, drafts a **cited decision brief**, and queues the right actions for one-click human approval.
+coralSync is the autonomous investigator for B2B SaaS billing operations. The moment a chargeback hits Stripe, a refund request lands in your support inbox, or a teammate `@-mentions` coralSync in Slack, the agent reads across **every connected system in one query**, drafts a **cited decision brief**, and queues the right actions for one-click human approval.
 
-A senior analyst spends 5 hours on a chargeback. opsGaurdian spends 3 minutes.
+A senior analyst spends 5 hours on a chargeback. coralSync spends 3 minutes.
 
 The work happens on top of [**Coral**](https://github.com/withcoral/coral) - a unified Postgres-compatible SQL surface over 11 SaaS schemas. Instead of integrating 11 vendor SDKs and stitching results in Python, the agent writes one wide `SELECT` that joins Stripe + Salesforce + HubSpot + Intercom + Zendesk + Slack + Notion + PostHog + Sentry + Datadog + PagerDuty, gets one rowset back, and grounds every claim in the brief with a citation that links back to the underlying record. Click any citation chip and the source dashboard opens to the exact row.
 
@@ -43,7 +43,7 @@ The work happens on top of [**Coral**](https://github.com/withcoral/coral) - a u
 
 | Stage | What happens |
 |---|---|
-| **1 · Trigger** | Stripe webhook fires · customer email lands at support@ · teammate `@-mentions` opsGaurdian in Slack. The agent picks it up the moment the event lands. |
+| **1 · Trigger** | Stripe webhook fires · customer email lands at support@ · teammate `@-mentions` coralSync in Slack. The agent picks it up the moment the event lands. |
 | **2 · Investigate** | The agent issues 3-6 Coral queries to pull every relevant fact in parallel, surfaces findings with citations, and emits a live narrative you can watch in real time. |
 | **3 · Brief** | A two-paragraph executive memo with the math shown, every number cited back to a source record. |
 | **4 · Decide** | Recommends refund / fight / partial-credit / escalate, then **drafts the actions** (Stripe refund, dispute response, customer email, HubSpot note, Slack post). |
@@ -83,7 +83,7 @@ When an upstream rejects an action (Stripe `charge_disputed`, Slack `channel_not
 
 - 🧠 **One-query investigations.** Coral exposes 11 SaaS schemas as Postgres-compatible SQL. The agent writes wide joins across them in a single round-trip, never per-source lookups.
 - 📑 **Cited brief.** Every claim in the postmortem carries a citation chip linking back to the underlying record (Stripe dispute, Notion page, Datadog incident). No fabrication - if it's in the brief, it's in a source.
-- 🔴 **Live investigation cinematic.** Watch the agent query each source in real time, with brand glyphs inline in the narrative ("opsGaurdian is asking 🟢 Intercom") and a running list of facts. Toggle the Coral panel to see the raw SQL feed.
+- 🔴 **Live investigation cinematic.** Watch the agent query each source in real time, with brand glyphs inline in the narrative ("coralSync is asking 🟢 Intercom") and a running list of facts. Toggle the Coral panel to see the raw SQL feed.
 - ✋ **Human-in-the-loop approval.** Operator reviews the brief, approves with one click, watches each action fire in a full-screen cinematic with per-action status and external-ref deep-links back to the source record (real Stripe refund / Resend email / HubSpot note / Slack ts).
 - ✉️ **Branded customer emails.** Templated HTML emails (table-based for Outlook/Gmail compat) with summary cards, branded header, and policy-grounded reasoning - never the raw decision rationale.
 - 🔒 **Per-user workspace isolation.** Every Clerk-authenticated user gets their own isolated org. Two operators can run investigations in parallel against the same demo data without seeing each other's cases.
@@ -99,28 +99,28 @@ When an upstream rejects an action (Stripe `charge_disputed`, Slack `channel_not
 
 ### Setup
 ```sh
-git clone https://github.com/ayush-gupta/opsgaurdian
-cd opsgaurdian
+git clone https://github.com/ayush-gupta/coralsync
+cd coralsync
 
 # 1 · Environment - fill in OPENROUTER_API_KEY, CORAL_BINARY,
 #                   STRIPE_API_KEY, RESEND_API_KEY, HUBSPOT_ACCESS_TOKEN,
 #                   SLACK_TOKEN, NOTION_TOKEN, CLERK_*
 cp .env.example .env
-cp opsgaurdian-api/.env.example opsgaurdian-api/.env
+cp coral-sync-api/.env.example coral-sync-api/.env
 cp agent/.env.example agent/.env
 
 # 2 · Database
-docker compose -f opsgaurdian-api/docker-compose.yml up -d postgres
+docker compose -f coral-sync-api/docker-compose.yml up -d postgres
 
 # 3 · Backend (API + 3 workers)
-cd opsgaurdian-api && uv sync
-uv run uvicorn opsgaurdian_api.main:app --reload --port 8765 &
-uv run python -m opsgaurdian_api.workers.investigate &
-uv run python -m opsgaurdian_api.workers.actor        &
-uv run python -m opsgaurdian_api.workers.prettifier   &
+cd coral-sync-api && uv sync
+uv run uvicorn coral_sync_api.main:app --reload --port 8765 &
+uv run python -m coral_sync_api.workers.investigate &
+uv run python -m coral_sync_api.workers.actor        &
+uv run python -m coral_sync_api.workers.prettifier   &
 
 # 4 · Frontend
-cd ../opsgaurdian-ui && npm install && npm run dev
+cd ../coral-sync-ui && npm install && npm run dev
 ```
 
 Visit **[http://localhost:5173](http://localhost:5173)**, sign in via Clerk, then click **Stripe Chargeback** on the empty-inbox hero to fire the canonical Aperture demo (an $8,400 dispute that resolves to a $560 partial credit).
@@ -132,7 +132,7 @@ Visit **[http://localhost:5173](http://localhost:5173)**, sign in via Clerk, the
        │  webhook · inbound · @-mention
        ▼
 ┌────────────────────────────────────────────────────────────────┐
-│   opsgaurdian-api  ·  FastAPI + asyncpg                            │
+│   coral-sync-api  ·  FastAPI + asyncpg                            │
 │   • cases / events / findings / actions  (per-org PG schema)   │
 │   • per-Clerk-user workspace isolation                         │
 │   • SSE streams: /api/inbox/stream, /api/cases/:id/stream      │
@@ -181,21 +181,21 @@ Visit **[http://localhost:5173](http://localhost:5173)**, sign in via Clerk, the
 
 ## Self-hosting
 
-opsGaurdian ships as 1 API + 3 workers + a Postgres + a Vite static frontend + the Coral subprocess. Single-box VPS deploy is the supported path - Caddy + cloud-init + a small setup script bring up the whole stack on one Ubuntu box. This is what runs at [opsgaurdian.quest](https://opsgaurdian.quest). Full walkthrough in [`DEPLOY.md`](./DEPLOY.md).
+coralSync ships as 1 API + 3 workers + a Postgres + a Vite static frontend + the Coral subprocess. Single-box VPS deploy is the supported path - Caddy + cloud-init + a small setup script bring up the whole stack on one Ubuntu box. This is what runs at [coralsync.quest](https://coralsync.quest). Full walkthrough in [`DEPLOY.md`](./DEPLOY.md).
 
 ## Contributing
 
 Issues and PRs welcome. Before pushing:
 
-- `cd opsgaurdian-ui && npm run typecheck`
-- `cd opsgaurdian-api && uv run pytest`
+- `cd coral-sync-ui && npm run typecheck`
+- `cd coral-sync-api && uv run pytest`
 - `cd agent && uv run pytest`
 
 Keep PRs scoped to a single concern; we squash-merge.
 
 ## License
 
-Apache 2.0 - see [`LICENSE`](./LICENSE). The hosted version at [opsgaurdian.quest](https://opsgaurdian.quest) ships the same code with managed Coral connections, OAuth onboarding, and Clerk-issued workspaces.
+Apache 2.0 - see [`LICENSE`](./LICENSE). The hosted version at [coralsync.quest](https://coralsync.quest) ships the same code with managed Coral connections, OAuth onboarding, and Clerk-issued workspaces.
 
 ---
 

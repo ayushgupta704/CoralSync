@@ -11,7 +11,7 @@ is designed to be testable in isolation and these tests exercise that.
 
 from __future__ import annotations
 
-from opsgaurdian_agent.pacer import (
+from coral_sync_agent.pacer import (
     CaseSnapshot,
     PaceDecision,
     judge_pre_conclude,

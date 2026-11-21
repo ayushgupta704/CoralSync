@@ -1,14 +1,14 @@
 import os
 import shutil
 
-repo_root = r"C:\Large_files\opsGaurd\opsGaurdian"
+repo_root = r"C:\Large_files\opsGaurd\coralSync"
 
 # 1. Rename directories if they exist
 dir_renames = [
-    (os.path.join(repo_root, "opsGaurd-api", "src", "opsgaurdian_api"), os.path.join(repo_root, "opsGaurd-api", "src", "opsgaurdian_api")),
-    (os.path.join(repo_root, "agent", "src", "opsgaurdian_agent"), os.path.join(repo_root, "agent", "src", "opsgaurdian_agent")),
-    (os.path.join(repo_root, "opsGaurd-api"), os.path.join(repo_root, "opsgaurdian-api")),
-    (os.path.join(repo_root, "opsGaurd-ui"), os.path.join(repo_root, "opsgaurdian-ui"))
+    (os.path.join(repo_root, "opsGaurd-api", "src", "coral_sync_api"), os.path.join(repo_root, "opsGaurd-api", "src", "coral_sync_api")),
+    (os.path.join(repo_root, "agent", "src", "coral_sync_agent"), os.path.join(repo_root, "agent", "src", "coral_sync_agent")),
+    (os.path.join(repo_root, "opsGaurd-api"), os.path.join(repo_root, "coral-sync-api")),
+    (os.path.join(repo_root, "opsGaurd-ui"), os.path.join(repo_root, "coral-sync-ui"))
 ]
 
 for src, dst in dir_renames:
@@ -17,11 +17,11 @@ for src, dst in dir_renames:
 
 # 2. String replacements across files
 replacements = {
-    'opsgaurdian-api': 'opsgaurdian-api',
-    'opsgaurdian-ui': 'opsgaurdian-ui',
-    'opsGaurdian': 'opsGaurdian',
-    'opsgaurdian': 'opsgaurdian',
-    'OPSGAURDIAN': 'OPSGAURDIAN',
+    'coral-sync-api': 'coral-sync-api',
+    'coral-sync-ui': 'coral-sync-ui',
+    'coralSync': 'coralSync',
+    'coralsync': 'coralsync',
+    'CORALSYNC': 'CORALSYNC',
     'ayush-gupta': 'ayush-gupta',
     'Ayush Gupta': 'Ayush Gupta',
     'ayushgupta': 'ayushgupta',

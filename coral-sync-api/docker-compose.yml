@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: coralsync-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: coralsync
+      POSTGRES_PASSWORD: coralsync_dev
+      POSTGRES_DB: coralsync
+    ports:
+      - "5433:5432"  # 5433 host → avoid clash with system postgres
+    volumes:
+      - coralsync_pg_data:/var/lib/postgresql/data
+      - ./schema:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coralsync"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  coralsync_pg_data:
